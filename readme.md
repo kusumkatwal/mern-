@@ -48,4 +48,25 @@ API:
 
 
 (nodemon - automatically restarts the node application when any change is detected.)
+Postman / insomnia 
 -SOAP
+
+(git pull origin --force)
+-user,banner, brand, categorym product
+src
+    /config     -all the configurations
+    /routes
+    /module
+        /auth       -user authorization
+        /banner
+        /brand
+        .category
+        /user
+        /product
+        /order
+        /blog
+        /pages
+        /offfers
+        /transactions
+    /utility            -additional features
+    /sevices            -email services etc

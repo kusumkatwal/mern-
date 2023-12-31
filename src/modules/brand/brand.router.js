@@ -1,7 +1,7 @@
 const express = require('express');
 const brand = express();
 
-brand.get('/brand-create' , (req,res) => {
+brand.get('/brand-create' , (req,res, next) => {
     res.json({
         result: "Brand successfully created.",
         message: "mounted brand routing",
@@ -9,7 +9,7 @@ brand.get('/brand-create' , (req,res) => {
     })
 })
 
-brand.get('/brand-list' , (req,res) => {
+brand.get('/brand-list' , (req,res, next) => {
     res.json({
         result: "Brand list.",
         message: "mounted brand routing",
@@ -17,7 +17,7 @@ brand.get('/brand-list' , (req,res) => {
     })
 })
 
-brand.get('/brand-list/:token' , (req,res) => {
+brand.get('/brand-list/:token' , (req,res, next) => {
     let id = req.params.token;
     res.json({
         result: "Brand number " + id,
@@ -26,7 +26,7 @@ brand.get('/brand-list/:token' , (req,res) => {
     })
 })
 
-brand.get('/brand-detail/:token' , (req,res) => {
+brand.get('/brand-detail/:token' , (req,res, next) => {
     let id = req.params.token;
     res.json({
         result: "Brand detail of " + id,
@@ -35,7 +35,7 @@ brand.get('/brand-detail/:token' , (req,res) => {
     })
 })
 
-brand.get('/brand-update/:token' , (req,res) => {
+brand.get('/brand-update/:token' , (req,res, next ) => {
     let id = req.params.token;
     res.json({
         result: "Brand detail updated on  " + id,
@@ -44,7 +44,7 @@ brand.get('/brand-update/:token' , (req,res) => {
     })
 })
 
-brand.get('/brand-delete/:token' , (req,res) => {
+brand.get('/brand-delete/:token' , (req,res, next) => {
     let id = req.params.token;
     res.json({
         result: "Brand detail deleted on  " + id,

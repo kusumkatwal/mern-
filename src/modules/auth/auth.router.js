@@ -1,91 +1,27 @@
 const express = require('express');
 const router = express(); 
+const authcheck = require('../../middleware/auth.middleware')
+const authCtrl = require("./auth.controller")
+const {validator, paramValidator, passwordValidator, loginValidator, forget_password_validator} = require ('../../middleware/validate.middleware')
+const {registerSchema, activationToken, passwordSchema, loginSchema, forget_password_schema} = require('./auth.request')
+const uploader = require("../../middleware/uploader.middleware")
 
+/**Register User */
+router.post('/register',uploader.single('image'),validator(registerSchema), authCtrl.register)
+router.get("/verify/:token" ,paramValidator(activationToken), authCtrl.verify)
+router.post("/activation/:token", paramValidator(activationToken),passwordValidator(passwordSchema) ,authCtrl.activation)
+//controller
+/**Login Process */
+router.post("/login",loginValidator(loginSchema),authCtrl.login)
 
-router.post("/register" , (req,res) => {
-    
-    let data = "Register post routing";
+router.get("/me", authcheck, authCtrl.getLoggedInUser);
+router.get("/logout",authcheck, authCtrl.logout )
 
-    res.json({
-        result: data,
-        message: " Authentication mounted",
-        meta: null
-    })
-})
+/**Forget Password */
+router.post("/forget-password", forget_password_validator(forget_password_schema),authCtrl.forget_password)
+router.post("/verify-password-token/:token",paramValidator(activationToken),authCtrl.reset_password )
+router.post ("/set-password/:token",paramValidator(activationToken),authCtrl.set_password )
 
-router.get("/activation/:token" , (req,res) => {
-    let id = req.params.token;
-    let data =[
-        {
-            id: id,
-            text: "Account no " + id + " activated"
-        }
-    ]
-
-    res.json({
-        result: data,
-        message: "Activation mounted",
-        meta: null
-    })
-})
-
-router.post("/set-password/:token", (req,res) => {
-    let id = req.params.token;
-
-    let data =[
-        {
-            id: id,
-            text: "Password set for " + id
-        }
-    ]
-
-    res.json ({
-        result: data,
-        message: "Password mounted",
-        meta: null
-    })
-
-})
-
-router.post("/login", (req,res) => {
-    res.json({
-        result: "Login Routing",
-        message: "mounted",
-        meta: null
-    })
-})
-
-router.post("/forget-password", (req,res) => {
-    res.json ({
-        result: "Forget password routing",
-        message: "mounted",
-        meta: null
-    })
-})
-
-router.post("/reset-password", (req,res) => {
-    res.json({
-        result: "Reset password Routing",
-        message: "mounted",
-        meta: null
-    })
-})
-
-router.get("/logout", (req,res) => {
-    res.json({
-        result: "Logout Routing",
-        message: "mounted",
-        meta: null
-    })
-})
-
-router.post ("/rbac" , (req,res) => {
-    res.json({
-        result: "Role Based Access Control",
-        message: "mounted",
-        meta: null
-    })
-})
 
 
 module.exports = router;

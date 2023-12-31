@@ -1,15 +1,26 @@
 const express = require("express");
-const router = express();
+const router = express.Router();
 
-router.post('/user', (req,res) => {
-    res.json({
-        result: "USer",
-        message: " User router mounted", 
-        meta: null
+router.route('/list')
+    .get((res, req, nest)=>{
+        res.json({
+            result: "USer",
+            message: " User router mounted", 
+            meta: null
+        })
+
     })
-});
+    .post((req, res, next) => {
+        res.json({
+            result: "User list",
+            message: "mounted",
+            meta:null 
+        })
+    })
 
-router.post('/list', (req,res) => {
+
+
+router.post('/list', (req,res, next) => {
     res.json({
         result: "User list",
         message: "mounted",
@@ -17,15 +28,7 @@ router.post('/list', (req,res) => {
     })
 })
 
-router.post('/list', (req,res) => {
-    res.json({
-        result: "User list",
-        message: "mounted",
-        meta:null 
-    })
-})
-
-router.post('/filtered-list/:id' , (req,res) => {
+router.post('/filtered-list/:id' , (req,res, next) => {
     var id = req.params.id;
     res.json({
         result: "User no " + id,
@@ -34,7 +37,7 @@ router.post('/filtered-list/:id' , (req,res) => {
     })
 })
 
-router.post('/user-detail/:id' , (req,res) => {
+router.post('/user-detail/:id' , (req,res, next) => {
     var id = req.params.id;
     res.json({
         result: "User detail of " + id,
@@ -43,7 +46,7 @@ router.post('/user-detail/:id' , (req,res) => {
     })
 })
 
-router.post('/user-update/:id' , (req,res) => {
+router.post('/user-update/:id' , (req,res, next) => {
     var id = req.params.id;
     res.json({
         result: "User details updated on " + id,
@@ -52,7 +55,7 @@ router.post('/user-update/:id' , (req,res) => {
     })
 })
 
-router.post('/user-delete/:id' , (req,res) => {
+router.post('/user-delete/:id' , (req,res, next) => {
     var id = req.params.id;
     res.json({
         result: "User details deleted on " + id,

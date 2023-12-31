@@ -1,7 +1,7 @@
 const express = require('express');
 const banner = express();
 
-banner.post('/banner-create', (req,res) => {
+banner.post('/banner-create', (req,res, next) => {
     res.json({
         result: "Banner created successfully",
         message: "mounted",
@@ -9,7 +9,7 @@ banner.post('/banner-create', (req,res) => {
     })
 })
 
-banner.post('/banner-list', (req,res) => {
+banner.post('/banner-list', (req,res, next) => {
     res.json({
         result: "Banner list",
         message: "mounted",
@@ -17,7 +17,7 @@ banner.post('/banner-list', (req,res) => {
     })
 })
 
-banner.post('/banner-list/:token', (req,res) => {
+banner.post('/banner-list/:token', (req,res, next) => {
     let id = req.params.token;
     res.json({
         result: "Banner no " + id,
@@ -26,7 +26,7 @@ banner.post('/banner-list/:token', (req,res) => {
     })
 })
 
-banner.post('/banner-detail/:token', (req,res) => {
+banner.post('/banner-detail/:token', (req,res, next) => {
     let id = req.params.token;
     res.json({
         result: "Banner details of " + id,
@@ -35,7 +35,7 @@ banner.post('/banner-detail/:token', (req,res) => {
     })
 })
 
-banner.post('/banner-update/:token', (req,res) => {
+banner.post('/banner-update/:token', (req,res, next) => {
     let id = req.params.token;
     res.json({
         result: "Banner updated on " + id,
@@ -44,7 +44,7 @@ banner.post('/banner-update/:token', (req,res) => {
     })
 })
 
-banner.post('/banner-delete/:token', (req,res) => {
+banner.post('/banner-delete/:token', (req,res,next) => {
     let id = req.params.token;
     res.json({
         result: "Banner no " + id + "deleted successfully",

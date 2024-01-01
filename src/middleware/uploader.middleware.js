@@ -6,32 +6,35 @@ const { randomString } = require('../config/helper.config');
 const myStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         const path = "./public/uploads"
-        if(!fs.existsSync(path)) {
+        if (!fs.existsSync(path)) {
             fs.mkdirSync(path, {
                 recursive: true
             })
         }
-        cb(null,path);
+        cb(null, path);
     },
-    filename: (req,file, cb) => {
-        const ext = (file.orignalname.split(".")).pop()
-        const fileName = randomString(30)+""+"."+ext
+    filename: (req, file, cb) => {
+        const ext = (file.originalname.split(".")).pop()
+        const fileName = randomString(30)+ "." + ext
         cb(null, fileName)
     }
- })
+})
 
-const imagefilter = (req, file, cb) => {
+const imageFilter = (req, file, cb) => {
     const ext = (file.originalname.split(".")).pop()
-        if(['jpg', 'jpeg', 'png', 'svg', 'gif', 'webp', 'bmp'])
-           { cb(null, true)}
-           else {
-            cb({code: 422, 
-            message: "File format is not supported"})
-           }
+    if (['jpg', 'jpeg', 'png', 'svg', 'gif', 'webp', 'bmp'].includes(ext.toLowerCase())) {
+        cb(null, true)
+    }
+    else {
+        cb({
+            code: 422,
+            message: "File format is not supported"
+        })
+    }
 }
-const uploader = multer ({
+const uploader = multer({
     storage: myStorage,
-    fileFilter: imagefilter,
+    fileFilter: imageFilter,
     limits: {
         fileSize: 5000000
     }

@@ -9,6 +9,7 @@ class AuthController {
             const payload = req.body;
 
             if (req.file) {
+                console.log(req.file);
                 payload.image = req.file.filename
             }
 
@@ -72,46 +73,53 @@ class AuthController {
     }
     activation = async (req, res, next) => {
         try {
-            let user = {
-                name: "Kusum Katwal",
-                email:"kusum742gmail.com",
-                status : 'activated',
+            const sucess = true;
+            if(sucess) 
+            {
+                let user = {
+                    name: "Kusum Katwal",
+                    email:"kusum742gmail.com",
+                    status : 'activated',
+                }
+                
+                //DB store: mongodb
+                //to do : db operation
+                let dbStatus = true;
+                if (dbStatus) {
+                    let email = "kusum74@gmail.com";
+                    let message = `Dear ${user.name},<br/>
+                                <p>Your account has been activated.
+                                <br/>
+                                Regards, <br/>
+                                System Admin <br/>
+                                <small> Please don't respond to this email. </small>
+                                </p>
+                                
+                    `
+                await (new EmailService()).sendEmail(email, "Account Activated", message)
+                }
+                res.json({
+                    result: req.body,
+                    message: "Password mounted",
+                    meta: null
+                })
+    
             }
-            
-            //DB store: mongodb
-            //to do : db operation
-            let dbStatus = true;
-            if (dbStatus) {
-                let email = "kusum74@gmail.com";
-                let message = `Dear ${user.name},<br/>
-                            <p>Your account has been activated.
-                            <br/>
-                            Regards, <br/>
-                            System Admin <br/>
-                            <small> Please don't respond to this email. </small>
-                            </p>
-                            
-                `
-            await (new EmailService()).sendEmail(email, "Account Activated", message)
+            else {
+                throw {code: 422, message: "Cannot activated at this moment."}
             }
-            res.json({
-                result: req.body,
-                message: "Password mounted",
-                meta: null
-            })
-
 
         } catch (exception) {
             console.log(exception);
             next({
-               
-                code: 422,
+               code: 422,
                 message: exception.message,
                 result: null
             })
 
         }
     }
+    
     login = (req, res, next) => {
         
             res.json({

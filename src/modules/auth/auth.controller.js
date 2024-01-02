@@ -78,7 +78,7 @@ class AuthController {
             {
                 let user = {
                     name: "Kusum Katwal",
-                    email:"kusum742gmail.com",
+                    email:"kusum742@gmail.com",
                     status : 'activated',
                 }
                 
@@ -86,7 +86,7 @@ class AuthController {
                 //to do : db operation
                 let dbStatus = true;
                 if (dbStatus) {
-                    let email = "kusum74@gmail.com";
+                    
                     let message = `Dear ${user.name},<br/>
                                 <p>Your account has been activated.
                                 <br/>
@@ -96,7 +96,7 @@ class AuthController {
                                 </p>
                                 
                     `
-                await (new EmailService()).sendEmail(email, "Account Activated", message)
+                await (new EmailService()).sendEmail(user.email, "Account Activated", message)
                 }
                 res.json({
                     result: req.body,

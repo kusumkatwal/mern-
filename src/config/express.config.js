@@ -1,5 +1,6 @@
 const express = require('express');
 const router = require('../router/router');
+require('./db.config');
 const app = express()
 // const errorRoutes = require('./error.config')
 

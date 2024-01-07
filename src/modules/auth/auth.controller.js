@@ -1,6 +1,9 @@
 const nodemailer = require('nodemailer');
 const { randomString } = require('../../config/helper.config');
 const EmailService = require('../common/email/email.service');
+const {MongoClient} = require("mongodb");
+const MongodbClass = require('../common/database/mongodb.service');
+const authSvc = require('../auth/auth.service')
 
 class AuthController {
     //todo: fnctions
@@ -21,27 +24,12 @@ class AuthController {
             payload.activationToken = randomString(100)
             payload.status = 'notactivated';
             //DB store: mongodb
-            //to do : db operation
-            let dbStatus = true;
-            if (dbStatus) {
-                let link = "http://localhost:5173/activate/" + payload.activationToken
-                let message = `Dear ${payload.name},<br/>
-                            <p>Your account has been sucessfully registered. Please
-                            click the url link given below. 
-                            <a href = ${link}>${link} </a>
-                            <br/>
-                            Regards, <br/>
-                            System Admin <br/>
-                            <small> Please don't respond to this email. </small>
-                            </p>
-                            
-                `
-
-                await (new EmailService()).sendEmail(payload.email, "Activate your account", message)
-            }
-
+            
+           
+            const dbStatus = await authSvc.registerUser(payload);
+            console.log(dbStatus)
             res.json({
-                result: payload,
+                result: dbStatus,
                 message: "Register data",
                 meta: null
             })
@@ -50,11 +38,7 @@ class AuthController {
                 code: 422,
                 message: exception.message,
                 result: null
-            })
-
-
-        }
-
+            })  }
     }
     verify = (req, res, next) => {
         let id = req.params.token;

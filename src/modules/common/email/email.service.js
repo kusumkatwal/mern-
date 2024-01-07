@@ -1,3 +1,4 @@
+require("dotenv").config()
 const nodemailer = require('nodemailer');
 
 class EmailService {
@@ -5,11 +6,11 @@ class EmailService {
     
     constructor(){
         this.transporter = nodemailer.createTransport({
-            host: "sandbox.smtp.mailtrap.io",
-            port : 587,
+            host: process.env.SMTP_HOST,
+            port : process.env.SMTP_PORT,
             auth: {
-                user: "63e9e543fd5ebc",
-                pass: "5c4393edeed6a7"
+                user: process.env.SMTP_USER_NAME,
+                pass: process.env.SMTP_PWD
             }
         })
     }
@@ -18,7 +19,7 @@ class EmailService {
         try{
             await this.transporter.sendMail({
                 to: to,
-                from: "no-reply@gmail.com",
+                from: process.env.FROM_ADDRESS,
                 subject: sub,
                 html: message
             })

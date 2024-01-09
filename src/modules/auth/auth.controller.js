@@ -1,9 +1,7 @@
-const nodemailer = require('nodemailer');
 const { randomString } = require('../../config/helper.config');
-const EmailService = require('../common/email/email.service');
-const {MongoClient} = require("mongodb");
-const MongodbClass = require('../common/database/mongodb.service');
 const authSvc = require('../auth/auth.service')
+const bcrypt = require('bcrypt')
+
 
 class AuthController {
     //todo: fnctions
@@ -29,7 +27,7 @@ class AuthController {
             const dbStatus = await authSvc.registerUser(payload);
             console.log(dbStatus)
             res.json({
-                result: dbStatus,
+                result: payload,
                 message: "Register data",
                 meta: null
             })
@@ -40,58 +38,37 @@ class AuthController {
                 result: null
             })  }
     }
-    verify = (req, res, next) => {
-        let id = req.params.token;
-        let data = [
-            {
-                id: id,
-                text: "Account no " + id + " activated"
-            }
-        ]
-
+    verify = async (req, res, next) => {
+       try{
+        const data = await authSvc.getUserByActivationToken(req.params.token)
         res.json({
             result: data,
-            message: "Activation mounted",
+            message: "",
             meta: null
         })
+       }catch(exception) {
+        console.log(exception)
+        next(exception)
+       }
+       
     }
     activation = async (req, res, next) => {
         try {
-            const sucess = true;
-            if(sucess) 
-            {
-                let user = {
-                    name: "Kusum Katwal",
-                    email:"kusum742@gmail.com",
-                    status : 'activated',
-                }
-                
-                //DB store: mongodb
-                //to do : db operation
-                let dbStatus = true;
-                if (dbStatus) {
-                    
-                    let message = `Dear ${user.name},<br/>
-                                <p>Your account has been activated.
-                                <br/>
-                                Regards, <br/>
-                                System Admin <br/>
-                                <small> Please don't respond to this email. </small>
-                                </p>
-                                
-                    `
-                await (new EmailService()).sendEmail(user.email, "Account Activated", message)
-                }
-                res.json({
-                    result: req.body,
-                    message: "Password mounted",
+            const userDetail = await authSvc.getUserByActivationToken(req.params.token)
+            const data = {
+                password: bcrypt.hashSync(req.body.password,10),
+                activationToken: null,
+                status: "activated"
+            }
+           
+            const response = await authSvc.updateUserById(userDetail._id, data)
+             res.json({
+                    result: response,
+                    message: "your account has been updated successfully.",
                     meta: null
                 })
     
-            }
-            else {
-                throw {code: 422, message: "Cannot activated at this moment."}
-            }
+          
 
         } catch (exception) {
             console.log(exception);

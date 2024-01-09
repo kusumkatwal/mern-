@@ -5,6 +5,11 @@ class EmailService {
     transporter;
     
     constructor(){
+        // console.log(process.env.SMTP_HOST)
+        // console.log(process.env.SMTP_PORT)
+        // console.log(process.env.SMTP_USER_NAME)
+        // console.log(process.env.SMTP_PWD)
+        // console.log(process.env.FROM_ADDRESS)
         this.transporter = nodemailer.createTransport({
             host: process.env.SMTP_HOST,
             port : process.env.SMTP_PORT,

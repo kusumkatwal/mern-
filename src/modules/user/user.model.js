@@ -31,7 +31,8 @@ const UserSchemaDef = new mongoose.Schema({
         enum: ["activated", "notactivated", "suspended","deleted"],
         default: "notactivated"
     },
-    dataOfBirth : Date
+    dataOfBirth : Date,
+
 
 },{
     timestamps: true,
@@ -39,5 +40,5 @@ const UserSchemaDef = new mongoose.Schema({
     autoIndex: true
 })
 
-const UserModel = mongoose.model("User", USerSchemaDef)
+const UserModel = mongoose.model("User", UserSchemaDef)
 module.exports = UserModel

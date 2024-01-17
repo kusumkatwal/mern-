@@ -2,11 +2,10 @@ const PermissionCheck = (role) => {
     return (req, res, next) => {
         try{ 
             let authUser = req.authUser; 
-            
             if(authUser.role 
                 &&
                 (
-                    (typeof role === 'string' && authUser.role ===role) ||
+                    (typeof role === 'string' && authUser.role == role) ||
                     (Array.isArray(role) && role.includes(authUser.role))
                 )) {
                 next();

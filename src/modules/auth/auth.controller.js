@@ -131,7 +131,7 @@ class AuthController {
     }
 
     getLoggedInUser = (req, res, next) => {
-        const loggedInUser = req.authUser
+        const loggedInUser = req.authUser;
         res.json({
             result: loggedInUser,
             message: "mounted",
@@ -181,24 +181,24 @@ class AuthController {
         }
     }
     reset_password = async(req, res, next) => {
-
-        
-       try{
+     try{
         const userDetail = await authSvc.getUserByFilter({forgetPasswordToken: req.params.token})
         if(!userDetail) {
-            throw{code: 422, messgae: "Token does nit exist r=or expired."}
+            throw{code: 422, messgae: "Token does not exist or already expired."}
         }else{
             const data = {
                 password: bcrypt.hashSync(req.body.password,10),
                 forgetPasswordToken: null,
                     }
+                    const response = await authSvc.updateUserById(userDetail._id, data)
+                    res.json({
+                        result: response,
+                        message: "your password has been updated sucessfully",
+                        meta: null
+                    })
         }
-        const response = await authSvc.updateUserById(userDetail._id, data)
-        res.json({
-            result: response,
-            message: "your password has been updated sucessfully",
-            meta: null
-        })
+        
+        
        }catch(exception){
         next(exception)
        }
@@ -211,13 +211,7 @@ class AuthController {
             meta: null
         })
     }
-    set_password = (req, res, next) => {
-        res.json({
-            result: "Role Based Access Control",
-            message: "mounted",
-            meta: null
-        })
-    }
+    
 
 }
 

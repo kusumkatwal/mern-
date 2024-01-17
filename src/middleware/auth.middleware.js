@@ -1,7 +1,7 @@
 require("dotenv").config()
 const jwt = require('jsonwebtoken')
 const authSvc = require('../modules/auth/auth.service')
-const authCheck = (req, res, next) => {
+const authCheck = async (req, res, next) => {
    try{ 
     let token;
 
@@ -20,12 +20,16 @@ const authCheck = (req, res, next) => {
 
     //token set
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
-    const userDetail = authSvc.getUserByFilter({_id: decoded.sub})
+    // console.log(decoded)
+    const userDetail = await authSvc.getUserByFilter({_id: decoded.sub})
+    // console.log('userdetail')
+    // console.log(userDetail)
    
     if(!userDetail) {
-        next({code: 401, message: "User does not existx anymore!"})
+        next({code: 401, message: "User does not exist anymore!"})
     }else {
         req.authUser = userDetail
+        console.log(req.authUser)
         next()
     }
     

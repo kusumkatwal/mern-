@@ -19,8 +19,8 @@ router.get("/logout",authcheck, authCtrl.logout )
 
 /**Forget Password */
 router.post("/forget-password", forget_password_validator(forget_password_schema),authCtrl.forget_password)
-router.post("/verify-password-token/:token",paramValidator(activationToken),authCtrl.reset_password )
-router.post ("/set-password/:token",paramValidator(activationToken),authCtrl.set_password )
+// router.post("/verify-password-token/:token",paramValidator(activationToken),authCtrl.reset_password )
+router.post ("/set-password/:token",paramValidator(activationToken),authCtrl.reset_password )
 
 
 

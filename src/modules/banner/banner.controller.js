@@ -81,6 +81,9 @@ class BannerController {
                 data.image = bannerDetail.image
             }
             const success = await bannerSvc.updateBanner(req.params.id, data)
+            if(!success){
+                throw {code: 400, message: "Problem while updating Banner"}
+            }
             res.json({
                 result: success,
                 message: "Banner updated successfully",

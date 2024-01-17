@@ -1,6 +1,8 @@
+require('dotenv').config();
 const { randomString } = require('../../config/helper.config');
 const authSvc = require('../auth/auth.service')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 
 class AuthController {
@@ -81,20 +83,57 @@ class AuthController {
         }
     }
     
-    login = (req, res, next) => {
-        
-            res.json({
-                result: req.body.user_name + "validated",
-                message: "mounted",
-                meta: null
-            })
+    login = async (req, res, next) => {
+       try {
+        const {email, password} = req.body;
+        const userDetails  = await authSvc.getUserByFilter({email})
+        if(!userDetails) {
+            throw {code: 422,
+            message: "User doesn't exists.",
+            result: {email}
+        }
+        }
+        if(userDetails && userDetails.status == 'activated'){
+            if(bcrypt.compareSync(password, userDetails.password)){
+                const token = jwt.sign({
+                    userId: userDetails._id
+                }, process.env.JWT_SECRET, {
+                    expiresIn: "1day",
+                    subject: `${userDetails._id}`
+                })
+                res.json({
+                    result:{
+                        token: token,
+                        type: "Bearer"
+                    }, message: "User logged in succesfully",
+                    meta: null
+                })
+            }
+            
+        }
+        else{
+            throw {
+                code: 422,
+                message: "User is not activated or is suspended",
+                result: {email}
+            }
+        }
+        res.json({
+            result: userDetails,
+            message: "mounted",
+            meta: null
+        })
+       }catch (exception){
+        next(exception)
+       }
+           
       
     }
 
     getLoggedInUser = (req, res, next) => {
-
+        const loggedInUser = req.authUser
         res.json({
-            result: "Login Routing",
+            result: loggedInUser,
             message: "mounted",
             meta: null
         })
@@ -103,28 +142,21 @@ class AuthController {
         //TODO get email for forget password
         //share reset token to registerred account
         try{
-
-            let payload = req.body;
-            let dbStatus = true; 
-            if(dbStatus) {
-                let link = "http://reset-password//";
-                let message = `<p> Dear ${payload.user},
-                                 <br/>
-                               Please click this link below to forget your password. 
-                               <a href = "${link}">${link} </a> <br/>
-                               Regards, <br/>
-                               System Admin <br/>
-                               <small>Please don't reply to this email.</small> `;
-
-                               await  (new EmailService()).sendEmail(payload.email, "Reset your password", message)
+            const{email} = req.body
+            const userDetail = await authSvc.getUserByFilter({email:email})
+            if(!userDetail) {
+                throw{code: 422, message:"user doesnot exist" , result: email}
             }
-
-          
-            res.json({
-                result: payload,
-                message: "mounted",
-                meta: null
-            })
+            else{
+                await authSvc.sendForgetPasswordMail(userDetail)
+                res.json({
+                    result:"",
+                    message: "an email has been sent to the registered email please chech your email for further processing. ",
+                    meta: null
+                })
+            }
+            
+           
 
         }catch(exception){
             console.log(exception  )
@@ -136,14 +168,40 @@ class AuthController {
         }
 
     }
-    reset_password = (req, res, next) => {
+    verifyForgetPasswordToken = async(req, res, next) => {
+        try{
+            let userDetail = await authSvcv.getUserByFilter({forgetPasswordToken: req.params.token})
+            res.json({
+                result: userDetail,
+                message: "USer doesnot exists",
+                meta: null 
+            })
+        }catch(exception) {
+            throw exception
+        }
+    }
+    reset_password = async(req, res, next) => {
 
-        //TODO : set password for forget 
+        
+       try{
+        const userDetail = await authSvc.getUserByFilter({forgetPasswordToken: req.params.token})
+        if(!userDetail) {
+            throw{code: 422, messgae: "Token does nit exist r=or expired."}
+        }else{
+            const data = {
+                password: bcrypt.hashSync(req.body.password,10),
+                forgetPasswordToken: null,
+                    }
+        }
+        const response = await authSvc.updateUserById(userDetail._id, data)
         res.json({
-            result: "Reset password Routing",
-            message: "mounted",
+            result: response,
+            message: "your password has been updated sucessfully",
             meta: null
         })
+       }catch(exception){
+        next(exception)
+       }
     }
     logout = (req, res, next) => {
         //TODO ->logout logged in user

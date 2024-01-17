@@ -32,6 +32,7 @@ const UserSchemaDef = new mongoose.Schema({
         default: "notactivated"
     },
     dataOfBirth : Date,
+    image: String
 
 
 },{

@@ -20,8 +20,8 @@ const passwordSchema = Joi.object({
 })
 
 const loginSchema = Joi.object({
-    user_name: Joi.string().min(2).max(8).required(),
-    password: Joi.string().min(5).max(20)
+    email: Joi.string().email().required(),
+    password: Joi.string()
 })
 
 const forget_password_schema = Joi.object ({

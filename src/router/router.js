@@ -7,7 +7,7 @@ const brand = require("../modules/brand/brand.router");
 
 app.use('/auth' , authRouter);
 app.use('/userRouting' , userRouter);
-app.use(banner );
+app.use('/banner', banner );
 app.use('/brand', brand);
 
  module.exports = app;

@@ -1,6 +1,6 @@
-const BannerModel = require("./banner.model");
+const BrandModel = require("./brand.model");
 
-class BannerService  {
+class BrandService  {
 
     transformCreateRequest = (req, isEdit=false) => {
         const data = {
@@ -23,22 +23,22 @@ class BannerService  {
         return data;
     }
 
-    createBanner =async (data) => {
+    createBrand =async (data) => {
         try{
-            const banner = new BannerModel(data)
-            return await banner.save()
+            const brand = new BrandModel(data)
+            return await brand.save()
         }catch(exception) {
             throw exception
         }
     }
      getcount = async(filter = {}) => {
-        const count = await BannerModel.countDocuments(filter)
+        const count = await BrandModel.countDocuments(filter)
         return count
     }
 
-    getAllBanners = async ({limit=10, skip=0, filter={}}) => {
+    getAllBrands = async ({limit=10, skip=0, filter={}}) => {
         try{
-            let data = await BannerModel.find(filter)
+            let data = await BrandModel.find(filter)
                 .populate("createdBy", ["_id", "name", "role"])
                 .populate("updatedBy", ["_id", "name", "role"])
                 .sort({"_id": "desc"})
@@ -52,7 +52,7 @@ class BannerService  {
     }
     getOneByFilter = async(filter) => {
         try{
-            const data = await BannerModel.findOne(filter)
+            const data = await BrandModel.findOne(filter)
                 .populate("createdBy", ["_id", "name", "role"])
                 .populate("updatedBy", ["_id", "name", "role"])
             return data;
@@ -61,9 +61,9 @@ class BannerService  {
         }
     }
 
-    updateBanner = async(id, data) => {
+    updateBrand = async(id, data) => {
         try{
-            let status = await BannerModel.findByIdAndUpdate(id, {
+            let status = await BrandModel.findByIdAndUpdate(id, {
                 $set: data
             })
             return status
@@ -74,9 +74,9 @@ class BannerService  {
 
     deleteById = async(id) => {
         try{
-            let response = await BannerModel.findByIdAndDelete(id)
+            let response = await BrandModel.findByIdAndDelete(id)
             if(!response){
-                throw{code: 404, message: "Banner doesnt exist or already delted."}
+                throw{code: 404, message: "Brand doesnt exist or already delted."}
             }else {
                 return response
             }
@@ -87,5 +87,5 @@ class BannerService  {
     }
 }
 
-const bannerSvc = new BannerService()
-module.exports = bannerSvc
+const brandSvc = new BrandService()
+module.exports = brandSvc

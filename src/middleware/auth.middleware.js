@@ -29,7 +29,7 @@ const authCheck = async (req, res, next) => {
         next({code: 401, message: "User does not exist anymore!"})
     }else {
         req.authUser = userDetail
-        console.log(req.authUser)
+        
         next()
     }
     

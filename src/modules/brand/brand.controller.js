@@ -1,14 +1,14 @@
-const bannerSvc = require("./banner.service");
+const brandSvc = require("./brand.service");
 
-class BannerController {
+class BrandController {
     
-    createBanner = async (req, res, next) => {
+    createBrand = async (req, res, next) => {
         try{
-            const data = bannerSvc.transformCreateRequest(req);
-            const success = await bannerSvc.createBanner(data)
+            const data = brandSvc.transformCreateRequest(req);
+            const success = await brandSvc.createBrand(data)
             res.json({
                 result: success,
-                message: "Banner stored successfully",
+                message: "Brand stored successfully",
                 meta: null
             })
         }catch(exception){
@@ -16,7 +16,7 @@ class BannerController {
         }
     }
 
-    listAllBanners = async (req, res, next) => {
+    listAllBrands = async (req, res, next) => {
         try{
             const query = req.query;
             let limit = +query.limit || 10
@@ -31,15 +31,15 @@ class BannerController {
                     title: new RegExp(query.search, 'i')
                 }
             }
-           const count = await bannerSvc.getcount(filter);
-            const data = await bannerSvc.getAllBanners ({
+           const count = await brandSvc.getcount(filter);
+            const data = await brandSvc.getAllBrands ({
                 limit : limit,
                 skip: skip,
                 filter: filter
             })
             res.json({
                 result: data,
-                message: "Banner fetched",
+                message: "Brand fetched",
                 meta: {
                     currentPage: page,
                     total: count,
@@ -52,15 +52,15 @@ class BannerController {
         }
     }
 
-    getBannerDetail = async(req, res, next) => {
+    getBrandDetail = async(req, res, next) => {
         try{
-            const data = await bannerSvc.getOneByFilter({_id: req.params.id})
+            const data = await brandSvc.getOneByFilter({_id: req.params.id})
             if(!data) {
-                throw{ code: 404, message: "Banner does not exists"}
+                throw{ code: 404, message: "Brand does not exists"}
             }else {
                 res.json({
                     result: data,
-                    message: "Banner detail fetched",
+                    message: "Brand detail fetched",
                     meta: null
                 })
             }
@@ -71,22 +71,22 @@ class BannerController {
 
     updateById = async (req, res, next) => {
         try{
-            const bannerDetail = await bannerSvc.getOneByFilter({_id: req.params.id});
-            if(!bannerDetail) {
+            const brandDetail = await brandSvc.getOneByFilter({_id: req.params.id});
+            if(!brandDetail) {
                 throw{code: 404,  message: "Message not found"}
             }
-            const data = bannerSvc.transformCreateRequest(req, true);
+            const data = brandSvc.transformCreateRequest(req, true);
 
             if(!data.image) {
-                data.image = bannerDetail.image
+                data.image = brandDetail.image
             }
-            const success = await bannerSvc.updateBanner(req.params.id, data)
+            const success = await brandSvc.updateBrand(req.params.id, data)
             if(!success){
-                throw {code: 400, message: "Problem while updating Banner"}
+                throw {code: 400, message: "Problem while updating Brand"}
             }
             res.json({
                 result: success,
-                message: "Banner updated successfully",
+                message: "Brand updated successfully",
                 meta: null
             })
         }catch(exception){
@@ -96,10 +96,10 @@ class BannerController {
 
     deleteById = async (req, res, next) => {
         try{
-            let response = await bannerSvc.deleteById(req.params.id)
+            let response = await brandSvc.deleteById(req.params.id)
             res.json({
                 result: response,
-                message: "Banner Deleted successfully",
+                message: "Brand Deleted successfully",
                 meta: null
             })
         }catch(exception){
@@ -109,7 +109,7 @@ class BannerController {
 
     loginHome = async (req, res, next) => {
         try{
-            const data = await BannerModel.getAllBanners({
+            const data = await BrandModel.getAllBrands({
                 limit:10,
                 skip: 0,
                 filter: {
@@ -117,11 +117,11 @@ class BannerController {
                 }
             })
             if(!data || data.length <= 0){
-                throw {code: 400, message: "Empty Banner list"}
+                throw {code: 400, message: "Empty Brand list"}
             }
             res.json({
                 result: data,
-                message: "Banner detail fetched",
+                message: "Brand detail fetched",
                 meta: null
             })
         }catch(exception) {
@@ -130,5 +130,5 @@ class BannerController {
     }
 }
 
-const bannerCtrl = new BannerController();
-module.exports = bannerCtrl;
+const brandCtrl = new BrandController();
+module.exports = brandCtrl;

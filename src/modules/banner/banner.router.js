@@ -10,9 +10,8 @@ const banner = express();
 
 banner.get("/home", bannerCtrl.loginHome)
 banner.route('/')
-    // .get(authCheck, PermissionCheck(role))
     .post(authCheck, PermissionCheck(USER_ROLES.admin),uploader.single('image'),validator(bannerCreateSchema),bannerCtrl.createBanner)
-
+    .get(authCheck, PermissionCheck(USER_ROLES.admin),bannerCtrl.listAllBanners)
 banner.route ('/:id')
     .get(
         authCheck,

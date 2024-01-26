@@ -1,7 +1,6 @@
-const BrandModel = require("./brand.model");
-const slugify = require('slugify')
+const CategoryModel = require("./category.model");
 
-class BrandService  {
+class CategoryService  {
 
     transformCreateRequest = (req, isEdit=false) => {
         const data = {
@@ -16,11 +15,8 @@ class BrandService  {
             }
         }
 
+        if(data.subCategory === null || data)
         if(!isEdit) {
-            data.slug = slugify(data.title,{
-                replacement: "-",
-                lower:true
-            })
             data.createdBy = req.authUser._id
         } else {
             data.updatedBy = req.authUser._id
@@ -28,22 +24,22 @@ class BrandService  {
         return data;
     }
 
-    createBrand =async (data) => {
+    createCategory =async (data) => {
         try{
-            const brand = new BrandModel(data)
-            return await brand.save()
+            const category = new CategoryModel(data)
+            return await category.save()
         }catch(exception) {
             throw exception
         }
     }
      getcount = async(filter = {}) => {
-        const count = await BrandModel.countDocuments(filter)
+        const count = await CategoryModel.countDocuments(filter)
         return count
     }
 
-    getAllBrands = async ({limit=10, skip=0, filter={}}) => {
+    getAllCategories = async ({limit=10, skip=0, filter={}}) => {
         try{
-            let data = await BrandModel.find(filter)
+            let data = await CategoryModel.find(filter)
                 .populate("createdBy", ["_id", "name", "role"])
                 .populate("updatedBy", ["_id", "name", "role"])
                 .sort({"_id": "desc"})
@@ -57,7 +53,7 @@ class BrandService  {
     }
     getOneByFilter = async(filter) => {
         try{
-            const data = await BrandModel.findOne(filter)
+            const data = await CategoryModel.findOne(filter)
                 .populate("createdBy", ["_id", "name", "role"])
                 .populate("updatedBy", ["_id", "name", "role"])
             return data;
@@ -66,9 +62,9 @@ class BrandService  {
         }
     }
 
-    updateBrand = async(id, data) => {
+    updateCategory = async(id, data) => {
         try{
-            let status = await BrandModel.findByIdAndUpdate(id, {
+            let status = await CategoryModel.findByIdAndUpdate(id, {
                 $set: data
             })
             return status
@@ -79,9 +75,9 @@ class BrandService  {
 
     deleteById = async(id) => {
         try{
-            let response = await BrandModel.findByIdAndDelete(id)
+            let response = await CategoryModel.findByIdAndDelete(id)
             if(!response){
-                throw{code: 404, message: "Brand doesnt exist or already delted."}
+                throw{code: 404, message: "Category doesnt exist or already delted."}
             }else {
                 return response
             }
@@ -92,5 +88,5 @@ class BrandService  {
     }
 }
 
-const brandSvc = new BrandService()
-module.exports = brandSvc
+const categorySvc = new CategoryService()
+module.exports = categorySvc

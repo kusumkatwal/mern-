@@ -1,23 +1,22 @@
-const brandSvc = require("./brand.service");
+const productSvc = require("./product.service");
 
-class BrandController {
+class ProductController {
     
-    createBrand = async (req, res, next) => {
+    createProduct = async (req, res, next) => {
         try{
-            const data = brandSvc.transformCreateRequest(req);
-            const success = await brandSvc.createBrand(data)
+            const data = productSvc.transformCreateRequest(req);
+            const success = await productSvc.createProduct(data)
             res.json({
                 result: success,
-                message: "Brand stored successfully",
+                message: "Product stored successfully",
                 meta: null
             })
-            console.log(data);
         }catch(exception){
             next(exception)
         }
     }
 
-    listAllBrands = async (req, res, next) => {
+    listAllProducts = async (req, res, next) => {
         try{
             const query = req.query;
             let limit = +query.limit || 10
@@ -32,15 +31,15 @@ class BrandController {
                     title: new RegExp(query.search, 'i')
                 }
             }
-           const count = await brandSvc.getcount(filter);
-            const data = await brandSvc.getAllBrands ({
+           const count = await productSvc.getcount(filter);
+            const data = await productSvc.getAllProducts ({
                 limit : limit,
                 skip: skip,
                 filter: filter
             })
             res.json({
                 result: data,
-                message: "Brand fetched",
+                message: "Product fetched",
                 meta: {
                     currentPage: page,
                     total: count,
@@ -53,15 +52,15 @@ class BrandController {
         }
     }
 
-    getBrandDetail = async(req, res, next) => {
+    getProductDetail = async(req, res, next) => {
         try{
-            const data = await brandSvc.getOneByFilter({_id: req.params.id})
+            const data = await productSvc.getOneByFilter({_id: req.params.id})
             if(!data) {
-                throw{ code: 404, message: "Brand does not exists"}
+                throw{ code: 404, message: "Product does not exists"}
             }else {
                 res.json({
                     result: data,
-                    message: "Brand detail fetched",
+                    message: "Product detail fetched",
                     meta: null
                 })
             }
@@ -72,22 +71,22 @@ class BrandController {
 
     updateById = async (req, res, next) => {
         try{
-            const brandDetail = await brandSvc.getOneByFilter({_id: req.params.id});
-            if(!brandDetail) {
+            const productDetail = await productSvc.getOneByFilter({_id: req.params.id});
+            if(!productDetail) {
                 throw{code: 404,  message: "Message not found"}
             }
-            const data = brandSvc.transformCreateRequest(req, true);
+            const data = productSvc.transformCreateRequest(req, true);
 
             if(!data.image) {
-                data.image = brandDetail.image
+                data.image = productDetail.image
             }
-            const success = await brandSvc.updateBrand(req.params.id, data)
+            const success = await productSvc.updateProduct(req.params.id, data)
             if(!success){
-                throw {code: 400, message: "Problem while updating Brand"}
+                throw {code: 400, message: "Problem while updating Product"}
             }
             res.json({
                 result: success,
-                message: "Brand updated successfully",
+                message: "Product updated successfully",
                 meta: null
             })
         }catch(exception){
@@ -97,10 +96,10 @@ class BrandController {
 
     deleteById = async (req, res, next) => {
         try{
-            let response = await brandSvc.deleteById(req.params.id)
+            let response = await productSvc.deleteById(req.params.id)
             res.json({
                 result: response,
-                message: "Brand Deleted successfully",
+                message: "Product Deleted successfully",
                 meta: null
             })
         }catch(exception){
@@ -110,7 +109,7 @@ class BrandController {
 
     loginHome = async (req, res, next) => {
         try{
-            const data = await BrandModel.getAllBrands({
+            const data = await ProductModel.getAllCategories({
                 limit:10,
                 skip: 0,
                 filter: {
@@ -118,11 +117,11 @@ class BrandController {
                 }
             })
             if(!data || data.length <= 0){
-                throw {code: 400, message: "Empty Brand list"}
+                throw {code: 400, message: "Empty Product list"}
             }
             res.json({
                 result: data,
-                message: "Brand detail fetched",
+                message: "Product detail fetched",
                 meta: null
             })
         }catch(exception) {
@@ -131,5 +130,5 @@ class BrandController {
     }
 }
 
-const brandCtrl = new BrandController();
-module.exports = brandCtrl;
+const productCtrl = new ProductController();
+module.exports = productCtrl;

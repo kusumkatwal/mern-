@@ -1,3 +1,4 @@
+const { default: slugify } = require("slugify");
 const CategoryModel = require("./category.model");
 
 class CategoryService  {
@@ -15,8 +16,14 @@ class CategoryService  {
             }
         }
 
-        if(data.subCategory === null || data)
+        if(data.subCategory === null || data.subCategory === ''){
+            data.subCategory = null;
+        }
         if(!isEdit) {
+            data.slug = slugify(data.title,{
+                replacement: "-",
+                lower: true
+            })
             data.createdBy = req.authUser._id
         } else {
             data.updatedBy = req.authUser._id
@@ -40,6 +47,7 @@ class CategoryService  {
     getAllCategories = async ({limit=10, skip=0, filter={}}) => {
         try{
             let data = await CategoryModel.find(filter)
+                .populate("subCategory", ["_id", 'title'])
                 .populate("createdBy", ["_id", "name", "role"])
                 .populate("updatedBy", ["_id", "name", "role"])
                 .sort({"_id": "desc"})
